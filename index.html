@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Harsh Darji | Portfolio</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html {
+            overflow-y: scroll; 
+            background-color: #0a0a0a;
+        }
+
+        body {
+            background-color: #0a0a0a;
+            color: #f0f0f0;
+            font-family: 'Inter', sans-serif;
+            width: 100%;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0a0a0a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #333;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #444;
+        }
+
+        #starCanvas {
+            position: fixed; 
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 0;
+            pointer-events: none;
+        }
+        /* HEADER SECTION */
+        header {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            padding: 120px 24px 60px;
+        }
+        .name {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: clamp(2.5rem, 6vw, 4.5rem);
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            margin: 0;
+        }
+        .title { font-size: 1.1rem; color: #888; margin-top: 12px; }
+        .subtitle {
+            font-size: 0.95rem;
+            color: #666;
+            margin: 8px auto 0;
+            max-width: 500px;
+        }
+
+        /* MAIN CONTENT */
+        main {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            margin: 0;
+            padding: 0 0 80px;
+        }
+        .section-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 0 24px;
+        }
+
+        /* PROJECT GRID */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 60px;
+            padding: 0 24px;
+            max-width: 1200px;
+            margin: 0 auto;
+            justify-items: center;
+        }
+        .card {
+            display: block;
+            background: linear-gradient(145deg, rgba(255,255,255,0.04), rgba(255,255,255,0.01));
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 16px;
+            padding: 32px;
+            overflow: hidden;
+            text-decoration: none;
+            color: #f0f0f0;
+            backdrop-filter: blur(12px);
+            transition: all 0.2s ease;
+            min-height: 362px;
+            width: 100%;
+            max-width: 500px;
+        }
+        /* Add this new class for the image area */
+        .card-image {
+            width: 100%;
+            height: 200px;
+            overflow: hidden;
+            background: #1a1a1a;
+        }
+
+        .card-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; 
+            transition: transform 0.5s ease;
+        }
+        .card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(255,255,255,0.25);
+        }
+        .card-title { font-family: 'Space Grotesk', sans-serif; font-size: 1.3rem; font-weight: 700; margin-bottom: 8px; }
+        .card-desc { font-size: 0.85rem; color: #999; line-height: 1.6; margin-bottom: 16px; }
+        
+        .tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+        .tag {
+            font-size: 0.8rem;
+            padding: 6px 14px;
+            border-radius: 999px;
+            border: 1px solid rgba(255,255,255,0.1);
+            margin-top: auto;
+            color: #aaa;
+        }
+
+        footer {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            padding: 32px 24px;
+            border-top: 1px solid rgba(255,255,255,0.08);
+            font-size: 0.8rem;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="starCanvas"></canvas>
+
+    <header>
+        <h1 class="name">Harsh Darji</h1>
+        <p class="title">Full-Stack Engineer · Open Source Enthusiast</p>
+        <p class="subtitle">Building production-grade systems. Explore my projects below.</p>
+    </header>
+
+    <main>
+        <h2 class="section-title">Projects</h2>
+        <div class="grid" id="projectGrid"></div>
+    </main>
+
+    <footer>
+        <p>© <span id="year"></span> Harsh Darji</p>
+    </footer>
+
+    <script>
+        // DATA - FROM YOUR APP.TSX
+        const projects = [
+            { name: "Autonomous Sensor Fusion Pipeline", image: "assets/12.png", tags: ["C++", "Embedded Systems", "Real-Time OS"], url: "https://github.com" },
+            { name: "Supply Chain Optimizer",  tags: ["Python", "Data Science", "AWS"], url: "https://github.com" },
+            { name: "Cloud-Native Microservices",  tags: ["Docker", "Kubernetes", "Node.js"], url: "https://github.com" },
+            { name: "Financial Modeling Engine",  tags: ["Python", "TensorFlow", "APIs"], url: "https://github.com" },
+            { name: "IoT Dashboard", tags: ["React", "MQTT", "TimescaleDB"], url: "https://github.com" },
+            { name: "AI Chat Application", tags: ["TypeScript", "OpenAI", "WebSockets"], url: "https://github.com" }
+        ];
+
+        // INJECT PROJECTS
+        const grid = document.getElementById('projectGrid');
+        projects.forEach(p => {
+            const card = document.createElement('a');
+            card.href = p.url;
+            card.className = 'card';
+            card.target = '_blank';
+            card.innerHTML = `
+                <h3 class="card-title">${p.name}</h3>
+                <div class="card-image">
+                    <img src="${p.image}" alt="${p.name}" onerror="this.src='https://via.placeholder.com/400x200?text=Image+Missing'">
+                </div>
+                <div class="tags">${p.tags.map(t => `<span class="tag">${t}</span>`).join('')}</div>
+            `;
+            grid.appendChild(card);
+        });
+
+        document.getElementById('year').innerText = new Date().getFullYear();
+
+        // ANIMATION LOGIC 
+        const canvas = document.getElementById('starCanvas');
+        const ctx = canvas.getContext('2d');
+        let stars = [];
+        let shootingStars = [];
+
+        function resize() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+
+        function initStars() {
+            stars = [];
+            for (let i = 0; i < 500; i++) {
+                stars.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    size: Math.random() * 1.8 + 0.3,
+                    opacity: Math.random() * 0.6 + 0.1,
+                    speed: Math.random() * 0.3 + 0.05
+                });
+            }
+        }
+        function spawnShootingStar() {
+            const edge = Math.floor(Math.random() * 3);
+            let x, y, angle;
+            if (edge === 0) { x = Math.random() * canvas.width; y = -10; angle = Math.PI * 0.25 + Math.random() * Math.PI * 0.5; }
+            else if (edge === 1) { x = -10; y = Math.random() * canvas.height * 0.5; angle = Math.random() * Math.PI * 0.4 + 0.1; }
+            else { x = canvas.width + 10; y = Math.random() * canvas.height * 0.5; angle = Math.PI - Math.random() * Math.PI * 0.4 - 0.1; }
+            
+            shootingStars.push({ 
+                x, y, angle, 
+                speed: 12 + Math.random() * 8, 
+                size: 1.5 + Math.random(), 
+                life: 0, 
+                maxLife: 60 + Math.random() * 40, 
+                tailLength: 30 + Math.random() * 20 
+            });
+        }
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw regular stars
+            stars.forEach(s => {
+                ctx.beginPath();
+                ctx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(255,255,255,${s.opacity})`;
+                ctx.fill();
+                s.y -= s.speed;
+                if (s.y < -5) { s.y = canvas.height + 5; s.x = Math.random() * canvas.width; }
+            });
+
+            // Draw shooting stars
+            for (let i = shootingStars.length - 1; i >= 0; i--) {
+                const ss = shootingStars[i];
+                ss.x += Math.cos(ss.angle) * ss.speed;
+                ss.y += Math.sin(ss.angle) * ss.speed;
+                ss.life++;
+                
+                const progress = ss.life / ss.maxLife;
+                const alpha = progress < 0.1 ? progress * 10 : progress > 0.7 ? (1 - progress) / 0.3 : 1;
+                
+                const tailX = ss.x - Math.cos(ss.angle) * ss.tailLength;
+                const tailY = ss.y - Math.sin(ss.angle) * ss.tailLength;
+                
+                const grad = ctx.createLinearGradient(tailX, tailY, ss.x, ss.y);
+                grad.addColorStop(0, `rgba(255,255,255,0)`);
+                grad.addColorStop(1, `rgba(255,255,255,${alpha * 0.8})`);
+                
+                ctx.beginPath();
+                ctx.moveTo(tailX, tailY);
+                ctx.lineTo(ss.x, ss.y);
+                ctx.strokeStyle = grad;
+                ctx.lineWidth = ss.size;
+                ctx.stroke();
+
+                if (ss.life >= ss.maxLife) shootingStars.splice(i, 1);
+            }
+            requestAnimationFrame(draw);
+        }
+
+        window.addEventListener('resize', () => { resize(); initStars(); });
+        resize();
+        initStars();
+        draw();
+        setInterval(spawnShootingStar, 10000);
+        setTimeout(spawnShootingStar, 2000);
+    </script>
+</body>
+</html>
