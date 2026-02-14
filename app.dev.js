@@ -109,8 +109,8 @@
         }
 
         window.addEventListener('resize', () => { resize(); initStars(); });
-            resize();
-            initStars();
-            draw();
-            setInterval(spawnShootingStar, 10000);
-            setTimeout(spawnShootingStar, 2000);
+        resize();
+        initStars();
+        draw();
+        setInterval(spawnShootingStar, 10000);
+        setTimeout(spawnShootingStar, 2000);
